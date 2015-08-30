@@ -72,7 +72,7 @@ void main()
 		}
 
 		//Gizmos::addSphere(vec3(0, .5f, 0), 1.0f, 100, 100, vec4(.25f, .25f, .25f, 1));
-		sun.Draw();
+		
 
 		Gizmos::draw(projection * view);
 

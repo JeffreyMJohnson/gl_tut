@@ -1,33 +1,37 @@
 #pragma once
 #include <glm\glm.hpp>
 #include <glm\ext.hpp>
-#include <aie\Gizmos.h>
 
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
 
+const vec4 WHITE = vec4(1, 1, 1, 1);
+const vec4 GREY = vec4(.5f, .5f, .5f, 1);
+const vec4 WIRE_FRAME = vec4(1, 1, 1, 0);
+
 
 class Body
 {
 public:
-	vec3 rotation;
-	vec4 color;
-	float radius;
+	vec3 rotation();
+	vec4 color = WHITE;
+	float radius = 0;
+	float rotationSpeed = 0;
 
-	Body(vec3 a_position = vec3(1), float a_radius = 1.0f,  vec3 a_scale = vec3(1), vec4 a_color = vec4(1,1,1,.5f));
-	
-	void SetPosition(vec3 newPosition);
+	Body() {};
 
-	void SetScale(vec3 newScale);
+	void Translate(vec3 newPosition);
 
-	void SetRotation(float angle, vec3 axis);
+	void Scale(vec3 newScale);
 
-	void Update(float deltaTime);
+	void Rotate(float angle, vec3 axis);
 
-	void Draw();
+	const mat4& GetTransform();
+
+	void SetParentTransform(const mat4* parentTransform);
 
 private:
 	mat4 mTransform;
-	vec3 mPosition, mScale, mRotation;
+	const mat4* mParentTransform = nullptr;
 };
