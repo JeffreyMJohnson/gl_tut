@@ -2,6 +2,8 @@
 #include <glm\glm.hpp>
 #include <glm\ext.hpp>
 
+#include <iostream>
+
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
@@ -18,8 +20,9 @@ public:
 	vec4 color = WHITE;
 	float radius = 0;
 	float rotationSpeed = 0;
+	mat4 mTransform = mat4(1);
+	const mat4* mParentTransform = nullptr;
 
-	Body() {};
 
 	void Translate(vec3 newPosition);
 
@@ -27,11 +30,8 @@ public:
 
 	void Rotate(float angle, vec3 axis);
 
-	const mat4& GetTransform();
-
 	void SetParentTransform(const mat4* parentTransform);
 
 private:
-	mat4 mTransform;
-	const mat4* mParentTransform = nullptr;
+
 };

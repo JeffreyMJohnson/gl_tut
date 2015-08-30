@@ -16,11 +16,6 @@ void Body::Rotate(float angle, vec3 axis)
 	mTransform = glm::rotate(mTransform, glm::radians(angle), axis);
 }
 
-const mat4& Body::GetTransform()
-{
-	return mTransform;
-}
-
 void Body::SetParentTransform(const mat4* parentTransform)
 {
 	mParentTransform = parentTransform;

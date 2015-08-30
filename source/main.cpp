@@ -7,7 +7,8 @@
 #include <glm\ext.hpp>
 #include <glm\gtx\transform.hpp>
 
-#include "Body.h"
+#include "Sun.h"
+#include "Timer.h"
 
 using glm::vec3;
 using glm::vec4;
@@ -52,12 +53,18 @@ void main()
 	glClearColor(.25f, .25f, .25f, 1);
 	glEnable(GL_DEPTH_TEST);
 
-	Body sun = Body();
+
+	Timer timer = Timer();
+	Sun sun = Sun();
+	sun.Init();
+	
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Gizmos::clear();
+		
+
 		Gizmos::addTransform(mat4(1));
 
 		vec4 white(1);
@@ -72,7 +79,11 @@ void main()
 		}
 
 		//Gizmos::addSphere(vec3(0, .5f, 0), 1.0f, 100, 100, vec4(.25f, .25f, .25f, 1));
-		
+		timer.Update(glfwGetTime());
+		sun.Update(timer.DeltaTime);
+
+		Gizmos::addSphere(vec3(), sun.radius, 20, 20, sun.color, &sun.mTransform);
+
 
 		Gizmos::draw(projection * view);
 
