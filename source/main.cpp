@@ -38,7 +38,13 @@ void main()
 		glfwDestroyWindow(window);
 		glfwTerminate();
 		return;
-	}	Gizmos::create();	mat4 view = glm::lookAt(vec3(10, 10, 10), vec3(0), vec3(0, 1, 0));	mat4 projection = glm::perspective(glm::pi<float>() * .25f, 16 / 9.f, .1f, 1000.f);
+	}
+
+	Gizmos::create();
+
+	mat4 view = glm::lookAt(vec3(10, 10, 10), vec3(0), vec3(0, 1, 0));
+	mat4 projection = glm::perspective(glm::pi<float>() * .25f, 16 / 9.f, .1f, 1000.f);
+
 	auto major = ogl_GetMajorVersion();
 	auto minor = ogl_GetMinorVersion();
 	printf("GL: %i.%i\n", major, minor);
