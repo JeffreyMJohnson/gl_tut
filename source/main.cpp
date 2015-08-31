@@ -7,13 +7,15 @@
 #include <glm\ext.hpp>
 #include <glm\gtx\transform.hpp>
 
-#include "Sun.h"
 #include "Timer.h"
 
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
 
+const vec4 WHITE = vec4(1);
+const vec4 BLACK = vec4(0, 0, 0, 1);
+const vec4 WIRE_FRAME = vec4(0);
 
 void main()
 {
@@ -29,7 +31,6 @@ void main()
 		glfwTerminate();
 		return;
 	}
-
 
 
 	glfwMakeContextCurrent(window);
@@ -55,15 +56,19 @@ void main()
 
 
 	Timer timer = Timer();
-	Sun sun = Sun();
-	sun.Init();
 	
+
+
+	
+	
+
+
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Gizmos::clear();
-		
+
 
 		Gizmos::addTransform(mat4(1));
 
@@ -80,10 +85,20 @@ void main()
 
 		//Gizmos::addSphere(vec3(0, .5f, 0), 1.0f, 100, 100, vec4(.25f, .25f, .25f, 1));
 		timer.Update(glfwGetTime());
-		sun.Update(timer.DeltaTime);
 
-		Gizmos::addSphere(vec3(), sun.radius, 20, 20, sun.color, &sun.mTransform);
+		mat4 sunOrbit = mat4(1);
+		mat4 earthOrbit = sunOrbit * glm::rotate(timer.CurrentTime, vec3(0,1,0)) * glm::translate(vec3(0,0,4));
+		mat4 moonOrbit = earthOrbit * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 1));
 
+		mat4 sunLocal, earthLocal, moonLocal;
+		earthLocal = glm::scale(vec3(.8f));
+		moonLocal = glm::scale(vec3(.1f));
+		sunLocal = glm::rotate(timer.CurrentTime, vec3(0, 1, 0));
+		
+
+		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(sunOrbit * sunLocal));
+		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(earthOrbit * earthLocal));
+		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(moonOrbit * moonLocal));
 
 		Gizmos::draw(projection * view);
 

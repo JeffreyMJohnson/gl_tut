@@ -132,19 +132,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\aie\Gizmos.cpp" />
-    <ClCompile Include="source\Body.cpp" />
     <ClCompile Include="source\gl_core_4_4.c" />
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\Sun.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Body.h" />
     <ClInclude Include="include\GLFW\glfw3.h" />
     <ClInclude Include="include\GLFW\glfw3native.h" />
     <ClInclude Include="include\glm\glm.hpp" />
     <ClInclude Include="include\glm\gtx\transform.hpp" />
     <ClInclude Include="include\gl_core_4_4.h" />
-    <ClInclude Include="include\Sun.h" />
     <ClInclude Include="include\Timer.h" />
   </ItemGroup>
   <ItemGroup>
