@@ -105,16 +105,31 @@ void main()
 		//Gizmos::addSphere(vec3(0, .5f, 0), 1.0f, 100, 100, vec4(.25f, .25f, .25f, 1));
 		timer.Update(glfwGetTime());
 
-		*orbitTransform[EARTH] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 4));
-		*orbitTransform[MOON] = *orbitTransform[EARTH] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 1));
+		*orbitTransform[MERCURY] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime + glm::radians(60.0f), vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 1.5));
+		*orbitTransform[VENUS] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime + glm::radians(30.0f), vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 3));
+		*orbitTransform[EARTH] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 4.5f));
+		*orbitTransform[MOON] = *orbitTransform[EARTH] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, .75f));
+		*orbitTransform[MARS] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 6.5f));
+		*orbitTransform[JUPITER] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 9));
+		*orbitTransform[SATURN] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 11.5f));
 
-		*localTransforms[EARTH] = glm::scale(vec3(.8f));
+		*localTransforms[SUN] = glm::rotate(timer.CurrentTime, vec3(0, 1, 0));
+		*localTransforms[MERCURY] = glm::scale(vec3(.3f));
+		*localTransforms[VENUS] = glm::scale(vec3(.5f));
+		*localTransforms[EARTH] = glm::scale(vec3(.5f));
 		*localTransforms[MOON] = glm::scale(vec3(.1f));
-		*localTransforms[SUN] = glm::rotate(timer.CurrentTime, vec3(0, 1, 0));		
+		*localTransforms[MARS] = glm::scale(vec3(.25f));
+		*localTransforms[JUPITER] = glm::scale(vec3(.85f));
+		*localTransforms[SATURN] = glm::scale(vec3(.75f));
 
 		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[SUN] * (*localTransforms[SUN])));
+		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[MERCURY] * (*localTransforms[MERCURY])));
+		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[VENUS] * (*localTransforms[VENUS])));
 		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[EARTH] * (*localTransforms[EARTH])));
 		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[MOON] * *localTransforms[MOON]));
+		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[MARS] * (*localTransforms[MARS])));
+		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[JUPITER] * (*localTransforms[JUPITER])));
+		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[SATURN] * (*localTransforms[SATURN])));
 
 		Gizmos::draw(projection * view);
 
