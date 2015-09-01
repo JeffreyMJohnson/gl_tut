@@ -1,151 +1,16 @@
-#include <gl_core_4_4.h>
-#include <GLFW\glfw3.h>
-#include <iostream>
-
-#include <aie\Gizmos.h>
-#include <glm\glm.hpp>
-#include <glm\ext.hpp>
-#include <glm\gtx\transform.hpp>
-
-#include "Timer.h"
-
-using glm::vec3;
-using glm::vec4;
-using glm::mat4;
-
-const vec4 WHITE = vec4(1);
-const vec4 BLACK = vec4(0, 0, 0, 1);
-const vec4 WIRE_FRAME = vec4(0);
-
-const int MAX_BODY_COUNT = 11;
-
-enum BODY
-{
-	SUN,
-	MERCURY,
-	VENUS,
-	EARTH,
-	MOON,
-	MARS,
-	JUPITER,
-	SATURN,
-	URANUS,
-	NEPTUNE,
-	PLUTO
-};
+#include "SolarSystemApp.h"
 
 void main()
 {
-	if (glfwInit() == false)
+	SolarSystemApp* app = new SolarSystemApp();
+	if (app->StartUp())
 	{
-		return;
-	}
-
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "Computer Graphics", nullptr, nullptr);
-
-	if (nullptr == window)
-	{
-		glfwTerminate();
-		return;
-	}
-
-
-	glfwMakeContextCurrent(window);
-
-	if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
-	{
-		glfwDestroyWindow(window);
-		glfwTerminate();
-		return;
-	}
-
-	Gizmos::create();
-
-	mat4 view = glm::lookAt(vec3(10, 10, 10), vec3(0), vec3(0, 1, 0));
-	mat4 projection = glm::perspective(glm::pi<float>() * .25f, 16 / 9.f, .1f, 1000.f);
-
-	auto major = ogl_GetMajorVersion();
-	auto minor = ogl_GetMinorVersion();
-	printf("GL: %i.%i\n", major, minor);
-
-	glClearColor(.25f, .25f, .25f, 1);
-	glEnable(GL_DEPTH_TEST);
-
-
-	Timer timer = Timer();
-	
-	mat4* localTransforms[MAX_BODY_COUNT];
-	mat4* orbitTransform[MAX_BODY_COUNT];
-	for (int i = 0; i < MAX_BODY_COUNT; i++)
-	{
-		localTransforms[i] = new mat4(1);
-		orbitTransform[i] = new mat4(1);
-	}
-
-	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		Gizmos::clear();
-
-
-		Gizmos::addTransform(mat4(1));
-
-		vec4 white(1);
-		vec4 black(0, 0, 0, 1);
-
-		for (int i = 0; i < 21; i++)
+		while (app->Update())
 		{
-			Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10), i == 10 ? white : black);
-
-			Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i), i == 10 ? white : black);
-
+			app->Draw();
 		}
-
-		//Gizmos::addSphere(vec3(0, .5f, 0), 1.0f, 100, 100, vec4(.25f, .25f, .25f, 1));
-		timer.Update(glfwGetTime());
-
-		*orbitTransform[MERCURY] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime + glm::radians(60.0f), vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 1.5));
-		*orbitTransform[VENUS] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime + glm::radians(30.0f), vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 3));
-		*orbitTransform[EARTH] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 4.5f));
-		*orbitTransform[MOON] = *orbitTransform[EARTH] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, .75f));
-		*orbitTransform[MARS] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 6.5f));
-		*orbitTransform[JUPITER] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 9));
-		*orbitTransform[SATURN] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 11.5f));
-
-		*localTransforms[SUN] = glm::rotate(timer.CurrentTime, vec3(0, 1, 0));
-		*localTransforms[MERCURY] = glm::scale(vec3(.3f));
-		*localTransforms[VENUS] = glm::scale(vec3(.5f));
-		*localTransforms[EARTH] = glm::scale(vec3(.5f));
-		*localTransforms[MOON] = glm::scale(vec3(.1f));
-		*localTransforms[MARS] = glm::scale(vec3(.25f));
-		*localTransforms[JUPITER] = glm::scale(vec3(.85f));
-		*localTransforms[SATURN] = glm::scale(vec3(.75f));
-
-		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[SUN] * (*localTransforms[SUN])));
-		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[MERCURY] * (*localTransforms[MERCURY])));
-		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[VENUS] * (*localTransforms[VENUS])));
-		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[EARTH] * (*localTransforms[EARTH])));
-		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[MOON] * *localTransforms[MOON]));
-		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[MARS] * (*localTransforms[MARS])));
-		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[JUPITER] * (*localTransforms[JUPITER])));
-		Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[SATURN] * (*localTransforms[SATURN])));
-
-		Gizmos::draw(projection * view);
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+		app->ShutDown();
 	}
-
-
-
-	for (int i = 0; i < MAX_BODY_COUNT; i++)
-	{
-		delete localTransforms[i];
-		delete orbitTransform[i];
-	}
-	Gizmos::destroy();
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	delete app;
 	return;
 }
