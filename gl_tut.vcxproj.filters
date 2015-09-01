@@ -24,9 +24,6 @@
     <ClCompile Include="include\aie\Gizmos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Body.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GLFW\glfw3.h">
@@ -44,7 +41,7 @@
     <ClInclude Include="include\glm\gtx\transform.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Body.h">
+    <ClInclude Include="include\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
