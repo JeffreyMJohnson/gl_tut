@@ -25,9 +25,7 @@ bool SolarSystemApp::StartUp()
 	}
 
 	Gizmos::create();
-
-	view = glm::lookAt(vec3(10, 10, 10), vec3(0), vec3(0, 1, 0));
-	projection = glm::perspective(glm::pi<float>() * .25f, 16 / 9.f, .1f, 1000.f);
+	InitCamera();
 	
 
 	if (DEBUG_MODE)
@@ -41,11 +39,7 @@ bool SolarSystemApp::StartUp()
 	glEnable(GL_DEPTH_TEST);
 
 	//init model transforms
-	for (int i = 0; i < MAX_BODY_COUNT; i++)
-	{
-		localTransforms[i] = new mat4(1);
-		orbitTransform[i] = new mat4(1);
-	}
+	InitBodies();
 
 	return true;
 }
@@ -58,7 +52,7 @@ void SolarSystemApp::ShutDown()
 		delete localTransforms[i];
 		delete orbitTransform[i];
 	}
-
+	delete mCamera;
 	Gizmos::destroy();
 	glfwDestroyWindow(mWindow);
 	glfwTerminate();
@@ -84,7 +78,6 @@ bool SolarSystemApp::Update()
 		Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10), i == 10 ? white : black);
 
 		Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i), i == 10 ? white : black);
-
 	}
 
 	timer.Update(glfwGetTime());
@@ -115,19 +108,37 @@ bool SolarSystemApp::Update()
 	Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[JUPITER] * (*localTransforms[JUPITER])));
 	Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[SATURN] * (*localTransforms[SATURN])));
 
-	mat4 cameraTransform = glm::inverse(view);
-	cameraTransform = *localTransforms[SUN]* glm::translate(vec3(0, 1, 10));
-	//cameraTransform = glm::translate(cameraTransform, vec3(timer.DeltaTime, 0, 0));
-	view = glm::inverse(cameraTransform);
+	mCamera->Update(timer.DeltaTime);
 
-	
+	//mat4 cameraTransform = glm::inverse(view);
+	//cameraTransform = *localTransforms[SUN]* glm::translate(vec3(0, 1, 10));
+	////cameraTransform = glm::translate(cameraTransform, vec3(timer.DeltaTime, 0, 0));
+	//view = glm::inverse(cameraTransform);
+
 	return true;
 }
 
 void SolarSystemApp::Draw()
 {
-	Gizmos::draw(projection * view);
+	Gizmos::draw(mCamera->GetProjection() * mCamera->GetView());
 
 	glfwSwapBuffers(mWindow);
 	glfwPollEvents();
+}
+
+void SolarSystemApp::InitBodies()
+{
+	for (int i = 0; i < MAX_BODY_COUNT; i++)
+	{
+		localTransforms[i] = new mat4(1);
+		orbitTransform[i] = new mat4(1);
+	}
+}
+void SolarSystemApp::InitCamera()
+{
+	mCamera = new FlyCamera(mWindow);
+	mCamera->SetSpeed(10.0f);
+	mCamera->SetRotationSpeed(10.0f);
+	mCamera->SetPerspective(CAMERA_FOV, (float)WINDOW_WIDTH / WINDOW_HEIGHT, CAMERA_NEAR, CAMERA_FAR);
+	mCamera->SetLookAt(CAMERA_FROM, CAMERA_TO, CAMERA_UP);
 }

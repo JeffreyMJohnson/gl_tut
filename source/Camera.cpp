@@ -4,11 +4,7 @@ void Camera::Update(const float deltaTime)
 {
 }
 
-void Camera::SetPerspective(const float fov, const float aspectRatio, const float near, const float far)
-{
-	mProjectionTransform = glm::perspective(fov, aspectRatio, near, far);
-	mProjectionViewTransform = mProjectionTransform * mViewTransform;
-}
+
 
 void Camera::SetLookAt(const glm::vec3 from, const glm::vec3 to, const glm::vec3 up)
 {
@@ -18,8 +14,9 @@ void Camera::SetLookAt(const glm::vec3 from, const glm::vec3 to, const glm::vec3
 
 void Camera::SetPosition(const glm::vec3 position)
 {
-	mWorldTransform = glm::translate(position);
+	mWorldTransform = glm::translate(mWorldTransform, position);
 	mViewTransform = glm::inverse(mWorldTransform);
+	UpdateProjectViewTransform();
 }
 
 const glm::mat4 Camera::GetWorldTransform()
@@ -39,5 +36,5 @@ const glm::mat4 Camera::GetProjection()
 
 void Camera::UpdateProjectViewTransform()
 {
-
+	mProjectionViewTransform = mProjectionTransform * mViewTransform;
 }

@@ -7,18 +7,17 @@ class Camera
 {
 public:
 	void Update(const float deltaTime);
-	void SetPerspective(const float fov, const float aspectRatio, const float near, const float far);
 	void SetLookAt(const glm::vec3 from, const glm::vec3 to, const glm::vec3 up);
 	void SetPosition(const glm::vec3 position);
 	const glm::mat4 GetWorldTransform();
 	const glm::mat4 GetView();
 	const glm::mat4 GetProjection();
-private:
-	bool isChanged = false;
+
+
+protected:
 	glm::mat4 mWorldTransform = glm::mat4();//logical update
 	glm::mat4 mViewTransform = glm::mat4();//draw transform
 	glm::mat4 mProjectionTransform = glm::mat4();
 	glm::mat4 mProjectionViewTransform = glm::mat4(); //projectionview * projectionTransform - draw transform
-	bool mIsOrthographic = false;
 	void UpdateProjectViewTransform();
 };
