@@ -76,16 +76,16 @@ bool SolarSystemApp::Update()
 
 	Gizmos::addTransform(mat4(1));
 
-	//vec4 white(1);
-	//vec4 black(0, 0, 0, 1);
+	vec4 white(1);
+	vec4 black(0, 0, 0, 1);
 
-	//for (int i = 0; i < 21; i++)
-	//{
-	//	Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10), i == 10 ? white : black);
+	for (int i = 0; i < 21; i++)
+	{
+		Gizmos::addLine(vec3(-10 + i, 0, 10), vec3(-10 + i, 0, -10), i == 10 ? white : black);
 
-	//	Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i), i == 10 ? white : black);
+		Gizmos::addLine(vec3(10, 0, -10 + i), vec3(-10, 0, -10 + i), i == 10 ? white : black);
 
-	//}
+	}
 
 	timer.Update(glfwGetTime());
 
@@ -97,7 +97,7 @@ bool SolarSystemApp::Update()
 	*orbitTransform[JUPITER] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 9));
 	*orbitTransform[SATURN] = *orbitTransform[SUN] * glm::rotate(timer.CurrentTime, vec3(0, 1, 0)) * glm::translate(vec3(0, 0, 11.5f));
 
-	*localTransforms[SUN] = glm::rotate(timer.CurrentTime, vec3(0, 1, 0));
+	*localTransforms[SUN] = glm::rotate(timer.CurrentTime * .01f, vec3(0, 1, 0));
 	*localTransforms[MERCURY] = glm::scale(vec3(.3f));
 	*localTransforms[VENUS] = glm::scale(vec3(.5f));
 	*localTransforms[EARTH] = glm::scale(vec3(.5f));
@@ -114,6 +114,11 @@ bool SolarSystemApp::Update()
 	Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[MARS] * (*localTransforms[MARS])));
 	Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[JUPITER] * (*localTransforms[JUPITER])));
 	Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[SATURN] * (*localTransforms[SATURN])));
+
+	mat4 cameraTransform = glm::inverse(view);
+	cameraTransform = *localTransforms[SUN]* glm::translate(vec3(0, 1, 10));
+	//cameraTransform = glm::translate(cameraTransform, vec3(timer.DeltaTime, 0, 0));
+	view = glm::inverse(cameraTransform);
 
 	
 	return true;
