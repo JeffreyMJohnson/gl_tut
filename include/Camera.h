@@ -19,6 +19,6 @@ private:
 	glm::mat4 mViewTransform = glm::mat4();//draw transform
 	glm::mat4 mProjectionTransform = glm::mat4();
 	glm::mat4 mProjectionViewTransform = glm::mat4(); //projectionview * projectionTransform - draw transform
-
+	bool mIsOrthographic = false;
 	void UpdateProjectViewTransform();
 };

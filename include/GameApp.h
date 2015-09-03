@@ -6,6 +6,7 @@
 #include <glm\ext.hpp>
 #include <glm\gtx\transform.hpp>
 #include "Timer.h"
+#include "Camera.h"
 
 
 class GameApp
@@ -18,5 +19,6 @@ public:
 
 	GLFWwindow* mWindow = nullptr;
 	Timer timer = Timer();
+	Camera mCamera();
 
 };
