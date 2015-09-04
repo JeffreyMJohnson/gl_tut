@@ -24,6 +24,5 @@ private:
 	double mCursorYPos = 0;
 
 	void HandleInput(float deltaTime);
-	Mouse mMouse;
 
 };

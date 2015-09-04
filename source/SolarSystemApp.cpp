@@ -17,6 +17,7 @@ bool SolarSystemApp::StartUp()
 
 	glfwMakeContextCurrent(mWindow);
 
+
 	if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
 	{
 		glfwDestroyWindow(mWindow);
@@ -108,6 +109,7 @@ bool SolarSystemApp::Update()
 	Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[JUPITER] * (*localTransforms[JUPITER])));
 	Gizmos::addSphere(vec3(), 1, 20, 20, WIRE_FRAME, &(*orbitTransform[SATURN] * (*localTransforms[SATURN])));
 
+	Mouse::Update();
 	mCamera->Update(timer.DeltaTime);
 
 	//mat4 cameraTransform = glm::inverse(view);
