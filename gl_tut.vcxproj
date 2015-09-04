@@ -134,6 +134,7 @@
     <ClCompile Include="include\aie\Gizmos.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\FlyCamera.cpp" />
+    <ClCompile Include="source\Mouse.cpp" />
     <ClCompile Include="source\SolarSystemApp.cpp" />
     <ClCompile Include="source\gl_core_4_4.c" />
     <ClCompile Include="source\main.cpp" />
