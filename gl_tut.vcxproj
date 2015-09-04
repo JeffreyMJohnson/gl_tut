@@ -150,6 +150,7 @@
     <ClInclude Include="include\gl_core_4_4.h" />
     <ClInclude Include="include\SolarSystemApp.h" />
     <ClInclude Include="include\Timer.h" />
+    <ClInclude Include="include\Mouse.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glfw3.lib" />
