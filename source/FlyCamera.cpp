@@ -4,7 +4,7 @@
 FlyCamera::FlyCamera(GLFWwindow* window)
 {
 	mWindow = window;
-	mMouse.Init();
+	Mouse::Init();
 }
 
 void FlyCamera::SetPerspective(const float fov, const float aspectRatio, const float near, const float far)
@@ -51,33 +51,27 @@ void FlyCamera::Update(float deltaTime)
 	}
 	else if (glfwGetKey(mWindow, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		direction = glm::vec3(-1,0, 0);
+		direction = glm::vec3(-1, 0, 0);
 	}
 	else if (glfwGetKey(mWindow, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		direction = glm::vec3(1,0, 0);
+		direction = glm::vec3(1, 0, 0);
 	}
 
 	Translate(deltaTime * mSpeed * direction);
 
-	double prevX = mCursorXPos;
-	double prevY = mCursorYPos;
-	glfwGetCursorPos(mWindow, &mCursorXPos, &mCursorYPos);
-	int distanceX = mCursorXPos - prevX;
-	int distanceY = mCursorYPos - prevY;
-
-	if (glfwGetMouseButton(mWindow, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+	if (Mouse::IsButtonPressed(Mouse::LEFT))
 	{
-		if (distanceX != 0)
+		if (Mouse::GetPosDeltaX() != 0)
 		{
-			Rotate(glm::radians(deltaTime * mRotSpeed * distanceX), glm::vec3(0, 1, 0));
+			Rotate(glm::radians(deltaTime * mRotSpeed * Mouse::GetPosDeltaX()), glm::vec3(0, 1, 0));
 		}
-		if (distanceY != 0)
+		if (Mouse::GetPosDeltaY() != 0)
 		{
-			Rotate(glm::radians(deltaTime * mRotSpeed * distanceY), glm::vec3(1,0,0));
+			Rotate(glm::radians(deltaTime * mRotSpeed * Mouse::GetPosDeltaY()), glm::vec3(1, 0, 0));
 		}
-		
+
 	}
-	
-	std::cout << "x: " << mMouse.getScrollX() << std::endl;
+
+	std::cout << "x: " << Mouse::GetPrevPosX() << std::endl;
 }
