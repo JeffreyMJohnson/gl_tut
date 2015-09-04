@@ -4,6 +4,7 @@
 FlyCamera::FlyCamera(GLFWwindow* window)
 {
 	mWindow = window;
+	mMouse.Init();
 }
 
 void FlyCamera::SetPerspective(const float fov, const float aspectRatio, const float near, const float far)
@@ -78,4 +79,5 @@ void FlyCamera::Update(float deltaTime)
 		
 	}
 	
+	std::cout << "x: " << mMouse.getScrollX() << std::endl;
 }
