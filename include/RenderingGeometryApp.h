@@ -40,7 +40,9 @@ private:
 	uint mVAO = 0;
 	uint mVBO = 0;
 	uint mIBO = 0;
-
+	uint mShaderProgramID = 0;
+	const uint ROWS = 25;
+	const uint COLS = 25;
 	void InitCamera();
 	void GenerateGrid(uint rows, uint cols);
 };

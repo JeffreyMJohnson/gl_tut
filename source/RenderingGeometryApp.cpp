@@ -2,6 +2,8 @@
 
 bool RenderingGeometryApp::StartUp()
 {
+
+
 	if (!glfwInit())
 	{
 		return false;
@@ -17,7 +19,6 @@ bool RenderingGeometryApp::StartUp()
 
 	glfwMakeContextCurrent(mWindow);
 
-
 	if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
 	{
 		glfwDestroyWindow(mWindow);
@@ -25,11 +26,82 @@ bool RenderingGeometryApp::StartUp()
 		return false;
 	}
 
-	//Gizmos::create();
-	
-
-
 	InitCamera();
+
+	// create shaders
+	const char* vsSource = "#version 410\n \
+							layout(location=0) in vec4 Position; \
+							layout(location=1) in vec4 Colour; \
+							out vec4 vColour; \
+							uniform mat4 ProjectionView; \
+							void main() \
+							{ \
+								vColour = Colour; \
+								gl_Position = ProjectionView * Position;\
+							}";
+
+	const char* shader2 = "#version 410\n \
+							layout(location=0) in vec4 Position; \
+							layout(location=1) in vec4 Colour; \
+							out vec4 vColour; \
+							uniform mat4 ProjectionView; \
+							uniform float time; \
+							uniform float heightScale; \
+							void main() \
+							{ \
+								vColour = Colour; \
+								vec4 P = Position; \
+								P.y += sin(time + Position.x) * heightScale; \
+								gl_Position = ProjectionView * P;\
+							}";
+
+	const char* fsSource = "#version 410\n \
+							in vec4 vColour; \
+							out vec4 FragColor; \
+							void main() \
+							{\
+								FragColor = vColour;\
+							}";
+
+	int success = GL_FALSE;
+	uint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	uint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	//glShaderSource(vertexShader, 1, (const char**)&vsSource, 0);
+	glShaderSource(vertexShader, 1, (const char**)&shader2, 0);
+	glCompileShader(vertexShader);
+	glShaderSource(fragmentShader, 1, (const char**)&fsSource, 0);
+	glCompileShader(fragmentShader);
+
+	mShaderProgramID = glCreateProgram();
+	glAttachShader(mShaderProgramID, vertexShader);
+	glAttachShader(mShaderProgramID, fragmentShader);
+	glLinkProgram(mShaderProgramID);
+
+	glGetProgramiv(mShaderProgramID, GL_LINK_STATUS, &success);
+	if (success == GL_FALSE) {
+		int infoLogLength = 0;
+		glGetProgramiv(mShaderProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
+		char* infoLog = new char[infoLogLength];
+		glGetProgramInfoLog(mShaderProgramID, infoLogLength, 0, infoLog);
+		printf("Error: Failed to link shader program!\n");
+		printf("%s\n", infoLog);
+		delete[] infoLog;
+	}
+	glDeleteShader(fragmentShader);
+	glDeleteShader(vertexShader);
+
+
+	GenerateGrid(ROWS, COLS);
+
+	glUseProgram(mShaderProgramID);
+	uint projectionViewUniform = glGetUniformLocation(mShaderProgramID, "ProjectionView");
+	uint timeUniform = glGetUniformLocation(mShaderProgramID, "time");
+	uint heightScaleUniform = glGetUniformLocation(mShaderProgramID, "heightScale");
+	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(mCamera->GetProjection() * mCamera->GetView()));
+	glUniform1f(timeUniform, timer.DeltaTime);
+	glUniform1f(heightScaleUniform, 2.0f);
+	glBindVertexArray(mVAO);
+
 
 
 	if (DEBUG_MODE)
@@ -58,11 +130,20 @@ void RenderingGeometryApp::ShutDown()
 
 bool RenderingGeometryApp::Update()
 {
+	if (glfwWindowShouldClose(mWindow) || glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		return false;
+	}
+	timer.Update(glfwGetTime());
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	return true;
 }
 
 void RenderingGeometryApp::Draw()
 {
+	uint indexCount = (ROWS - 1) * (COLS - 1) * 6;
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 	glfwSwapBuffers(mWindow);
 	glfwPollEvents();
 }
@@ -118,7 +199,7 @@ void RenderingGeometryApp::GenerateGrid(uint rows, uint cols)
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (rows - 1)*(cols - 1) * 6 * sizeof(uint), indeces, GL_STATIC_DRAW);
-	
+
 
 	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 	glBufferData(GL_ARRAY_BUFFER, (rows * cols) * sizeof(Vertex), vertices, GL_STATIC_DRAW);
@@ -132,7 +213,6 @@ void RenderingGeometryApp::GenerateGrid(uint rows, uint cols)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-
-
-	delete vertices;
+	delete[] vertices;
+	delete[] indeces;
 }
