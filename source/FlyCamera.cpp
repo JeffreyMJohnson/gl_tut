@@ -5,6 +5,7 @@ FlyCamera::FlyCamera(GLFWwindow* window)
 {
 	mWindow = window;
 	Mouse::Init();
+	Keyboard::Init();
 }
 
 void FlyCamera::SetPerspective(const float fov, const float aspectRatio, const float near, const float far)
@@ -41,19 +42,19 @@ void FlyCamera::Translate(glm::vec3 distance)
 void FlyCamera::Update(float deltaTime)
 {
 	glm::vec3 direction = glm::vec3(0);
-	if (glfwGetKey(mWindow, GLFW_KEY_W) == GLFW_PRESS)
+	if (Keyboard::IsKeyPressed(Keyboard::KEY_W) || Keyboard::IsKeyRepeat(Keyboard::KEY_W))
 	{
 		direction = glm::vec3(0, 0, -1);
 	}
-	else if (glfwGetKey(mWindow, GLFW_KEY_X) == GLFW_PRESS)
+	else if (Keyboard::IsKeyPressed(Keyboard::KEY_X) || Keyboard::IsKeyRepeat(Keyboard::KEY_X))
 	{
 		direction = glm::vec3(0, 0, 1);
 	}
-	else if (glfwGetKey(mWindow, GLFW_KEY_A) == GLFW_PRESS)
+	else if (Keyboard::IsKeyPressed(Keyboard::KEY_A) || Keyboard::IsKeyRepeat(Keyboard::KEY_A))
 	{
 		direction = glm::vec3(-1, 0, 0);
 	}
-	else if (glfwGetKey(mWindow, GLFW_KEY_D) == GLFW_PRESS)
+	else if (Keyboard::IsKeyPressed(Keyboard::KEY_D) || Keyboard::IsKeyRepeat(Keyboard::KEY_D))
 	{
 		direction = glm::vec3(1, 0, 0);
 	}
@@ -72,6 +73,6 @@ void FlyCamera::Update(float deltaTime)
 		}
 
 	}
-
-	std::cout << "x: " << Mouse::GetPrevPosX() << std::endl;
+	//std::cout << "W: " << Keyboard::IsKeyPressed(Keyboard::KEY_W) << std::endl;
+	//std::cout << "x: " << Mouse::GetPrevPosX() << std::endl;
 }

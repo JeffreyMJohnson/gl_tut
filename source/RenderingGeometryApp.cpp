@@ -3,7 +3,6 @@
 bool RenderingGeometryApp::StartUp()
 {
 
-
 	if (!glfwInit())
 	{
 		return false;
@@ -29,7 +28,7 @@ bool RenderingGeometryApp::StartUp()
 	InitCamera();
 
 	// create shaders
-	const char* vsSource = "#version 410\n \
+	const char* vsSource = "#version 330\n \
 							layout(location=0) in vec4 Position; \
 							layout(location=1) in vec4 Colour; \
 							out vec4 vColour; \
@@ -40,7 +39,7 @@ bool RenderingGeometryApp::StartUp()
 								gl_Position = ProjectionView * Position;\
 							}";
 
-	const char* shader2 = "#version 410\n \
+	const char* shader2 = "#version 330\n \
 							layout(location=0) in vec4 Position; \
 							layout(location=1) in vec4 Colour; \
 							out vec4 vColour; \
@@ -55,7 +54,7 @@ bool RenderingGeometryApp::StartUp()
 								gl_Position = ProjectionView * P;\
 							}";
 
-	const char* fsSource = "#version 410\n \
+	const char* fsSource = "#version 330\n \
 							in vec4 vColour; \
 							out vec4 FragColor; \
 							void main() \
@@ -99,7 +98,7 @@ bool RenderingGeometryApp::StartUp()
 	uint heightScaleUniform = glGetUniformLocation(mShaderProgramID, "heightScale");
 	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(mCamera->GetProjection() * mCamera->GetView()));
 	glUniform1f(timeUniform, timer.DeltaTime);
-	glUniform1f(heightScaleUniform, 2.0f);
+	glUniform1f(heightScaleUniform, 0.0f);
 	glBindVertexArray(mVAO);
 
 
@@ -115,7 +114,6 @@ bool RenderingGeometryApp::StartUp()
 	glEnable(GL_DEPTH_TEST);
 
 	//init model transforms
-
 
 	return true;
 }
@@ -135,7 +133,10 @@ bool RenderingGeometryApp::Update()
 		return false;
 	}
 	timer.Update(glfwGetTime());
+	mCamera->Update(timer.DeltaTime);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
 	return true;
 }
 
@@ -143,6 +144,8 @@ void RenderingGeometryApp::Draw()
 {
 	uint indexCount = (ROWS - 1) * (COLS - 1) * 6;
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	uint projectionViewUniform = glGetUniformLocation(mShaderProgramID, "ProjectionView");
+	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(mCamera->GetProjection() * mCamera->GetView()));
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 	glfwSwapBuffers(mWindow);
 	glfwPollEvents();

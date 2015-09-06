@@ -20,5 +20,4 @@ public:
 	GLFWwindow* mWindow = nullptr;
 	Timer timer = Timer();
 	
-
 };

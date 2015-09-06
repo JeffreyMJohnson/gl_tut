@@ -1,6 +1,7 @@
 #pragma once
 #include "Camera.h"
 #include "Mouse.h"
+#include "Keyboard.h"
 #include <GLFW\glfw3.h>
 #include <iostream>
 
